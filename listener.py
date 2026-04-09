@@ -34,17 +34,19 @@ else:
 async def handler(event):
     now = time.strftime("%H:%M:%S")
 
-    sender = await event.get_sender()
-    username = getattr(sender, "username", None)
+    # Fast path: pakai entity cache dari event, hindari network call per message.
+    sender = event.sender
+    username = getattr(sender, "username", None) if sender else None
     if username:
         user_display = f"@{username}"
     else:
-        name = getattr(sender, "first_name", "") or ""
-        user_display = name.strip() if name else "unknown"
+        name = getattr(sender, "first_name", "") if sender else ""
+        user_display = (name or "").strip() or "unknown"
 
     if event.is_group or event.is_channel:
-        chat = await event.get_chat()
-        chat_name = getattr(chat, "title", "unknown")
+        chat = event.chat
+        chat_name = getattr(chat, "title", None) if chat else None
+        chat_name = chat_name or "unknown"
     else:
         chat_name = None
 
@@ -78,11 +80,11 @@ async def handler(event):
 
     flag_str = f"({' '.join(flags)})" if flags else ""
     if chat_name:
-        print(f"[{now}] | {chat_name} | {user_display} | {flag_str} {text}")
+        print(f"[{now}] | {chat_name} | {user_display} | {flag_str} {text}", flush=True)
     else:
-        print(f"[{now}] | {user_display} | {flag_str} {text}")
+        print(f"[{now}] | {user_display} | {flag_str} {text}", flush=True)
 
 
-print(f"START listener | session_mode={session_mode}")
+print(f"START listener | session_mode={session_mode}", flush=True)
 client.start()
 client.run_until_disconnected()
