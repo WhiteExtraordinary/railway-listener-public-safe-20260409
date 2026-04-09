@@ -23,6 +23,6 @@ Langkah cepat deploy:
 5. Redeploy, lalu cek logs.
 
 Catatan penting:
-- Di Railway tidak ada browser desktop, jadi script akan log URL ke logs, bukan membuka Chrome.
+- Script sekarang mode logger: mencetak chat, sender, flags media/link/hashtag ke logs.
 - Kalau deploy via GitHub public, jangan commit file `.session`.
 - `listener.py` tetap support file session kalau `TG_STRING_SESSION` tidak diisi.
